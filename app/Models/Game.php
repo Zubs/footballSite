@@ -9,8 +9,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Game extends Model
 {
     protected $fillable = [
-        'api_id', 'home_team_id', 'away_team_id', 'match_date',
-        'status', 'score_home', 'score_away', 'venue'
+        'api_id', 'home_team_id', 'away_team_id', 'game_date',
+        'status', 'score_home', 'score_away', 'venue',
+        'last_synced_at'
     ];
 
     // Relationships
