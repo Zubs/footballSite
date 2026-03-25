@@ -24,9 +24,19 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        $dateString = $request->query('date', Carbon::today()->format('Y-m-d'));
+        $dateString = $request->query('date', now()->format('Y-m-d'));
+        $term = $request->query('term');
         $date = Carbon::parse($dateString);
-        $games = Game::whereDate('game_date', $date)->get();
+        $query = Game::with(['homeTeam', 'awayTeam'])->whereDate('game_date', $date);
+
+        if ($term) {
+            $query->where(function($q) use ($term) {
+                $q->whereHas('homeTeam', fn($t) => $t->where('name', 'like', "%$term%"))
+                    ->orWhereHas('awayTeam', fn($t) => $t->where('name', 'like', "%$term%"));
+            });
+        }
+
+        $games = $query->get();
 
         if ($games->isEmpty()) {
             $this->apiService->syncMatches($dateString);
@@ -38,7 +48,10 @@ class HomeController extends Controller
         $upcoming = $games->whereNotIn('status', ['FINISHED', 'AWARDED']);
 
         if ($request->ajax()) {
-            return view('partials.match-list', compact('completed', 'upcoming', 'date'))->render();
+            return response()->json([
+                'matchListHtml' => view('partials.match-list', compact('completed', 'upcoming'))->render(),
+                'dateNavHtml' => view('partials.date-nav', compact('date'))->render(),
+            ]);
         }
 
         return view('home', compact('completed', 'upcoming', 'date'));

@@ -63,19 +63,22 @@
             background: var(--sky-light);
             padding: 14px 24px;
             display: flex;
-            gap: 10px;
+            flex-direction: column; /* Stack search and geo button for better mobile flow */
+            gap: 12px;
             align-items: center;
             border-bottom: 1px solid var(--border);
         }
 
         .search-input {
-            flex: 1;
+            width: 100%; /* Make it take the full container width */
+            max-width: 800px; /* But don't let it get ridiculously wide on ultra-wide screens */
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 24px;
-            padding: 9px 16px;
-            max-width: 320px;
+            padding: 12px 20px;
+            font-size: 16px;
             outline: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         /* Date Nav */
@@ -203,11 +206,13 @@
             object-fit: contain;
             margin-bottom: 4px;
         }
+
         .team-side {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
         }
+
         .team-side.right {
             align-items: flex-end;
         }
@@ -248,6 +253,50 @@
             });
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const contentArea = document.querySelector('.content');
+        const dateNavArea = document.querySelector('.date-nav');
+
+        function updateContent(url) {
+            // Show a simple loading state (UX boost)
+            contentArea.style.opacity = '0.5';
+
+            fetch(url, {
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    contentArea.innerHTML = data.matchListHtml;
+                    dateNavArea.innerHTML = data.dateNavHtml;
+                    contentArea.style.opacity = '1';
+
+                    // Update the URL in the browser without reloading
+                    window.history.pushState({}, '', url);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // --- Search Listener (with Debounce) ---
+        let searchTimer;
+        document.getElementById('teamSearch').addEventListener('input', function(e) {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                const term = e.target.value;
+                const url = `{{ route('home') }}?term=${term}`;
+                updateContent(url);
+            }, 300); // Wait 300ms after typing stops to save API/DB load
+        });
+
+        // --- Date Arrow Listener ---
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('date-arrow') || e.target.closest('.date-arrow')) {
+                e.preventDefault();
+                const anchor = e.target.tagName === 'A' ? e.target : e.target.closest('a');
+                if (anchor) updateContent(anchor.href);
+            }
+        });
+    });
 </script>
 </body>
 </html>
