@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Team extends Model
 {
-    protected $fillable = ['api_id', 'name', 'tla', 'crest_url'];
+    protected $fillable = ['api_id', 'name', 'tla', 'crest_url', 'country'];
 
     public function homeMatches(): HasMany
     {

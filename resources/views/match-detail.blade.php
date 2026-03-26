@@ -24,6 +24,26 @@
                 {{ $game->venue }} • {{ $game->status }}
                 • {{ Carbon::parse($game->game_date)->format('d M Y') }}
             </div>
+            <button onclick="shareMatch()" class="geo-btn" style="margin-top: 15px; background: var(--sky-light); border-color: var(--sky-mid); color: var(--sky-dark);">
+                📤 Share Match
+            </button>
+
+            <script>
+                function shareMatch() {
+                    if (navigator.share) {
+                        navigator.share({
+                            title: '{{ $game->homeTeam->name }} vs {{ $game->awayTeam->name }}',
+                            text: 'Check out the live stats and join the discussion for this match on FootballSite!',
+                            url: window.location.href
+                        }).then(() => {
+                            console.log('Thanks for sharing!');
+                        }).catch(console.error);
+                    } else {
+                        // Fallback for desktop browsers that don't support native share
+                        alert("Copy this link to share: " + window.location.href);
+                    }
+                }
+            </script>
         </div>
 
         <div

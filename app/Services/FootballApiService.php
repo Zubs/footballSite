@@ -47,6 +47,7 @@ class FootballApiService
                     ['api_id' => $teams['home']['id']],
                     [
                         'name' => $teams['home']['name'],
+                        'country' => $item['league']['country'] ?? null,
                         'crest_url' => $teams['home']['logo'],
                         'tla' => Str::upper(Str::limit(preg_replace('/[^A-Za-z0-9]/', '', $teams['home']['name']), 3, ''))
                     ]
@@ -57,7 +58,7 @@ class FootballApiService
                     [
                         'name' => $teams['away']['name'],
                         'crest_url' => $teams['away']['logo'],
-                        'tla' => Str::upper(Str::limit(preg_replace('/[^A-Za-z0-9]/', '', $teams['home']['name']), 3, ''))
+                        'tla' => Str::upper(Str::limit(preg_replace('/[^A-Za-z0-9]/', '', $teams['away']['name']), 3, ''))
                     ]
                 );
 

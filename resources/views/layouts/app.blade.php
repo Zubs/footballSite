@@ -259,37 +259,66 @@
 </main>
 
 <script>
+    function updateContent(url) {
+        const contentArea = document.querySelector('.content');
+        const dateNavArea = document.querySelector('.date-nav');
+
+        if (!contentArea) {
+            return
+        }
+
+        // Show a simple loading state (UX boost)
+        contentArea.style.opacity = '0.5';
+
+        fetch(url, {
+            headers: {"X-Requested-With": "XMLHttpRequest"}
+        })
+            .then(response => response.json())
+            .then(data => {
+                contentArea.innerHTML = data.matchListHtml;
+
+                if (dateNavArea) {
+                    dateNavArea.innerHTML = data.dateNavHtml;
+                }
+
+                contentArea.style.opacity = '1';
+                window.history.pushState({}, '', url);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
     function getLocation() {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(pos => {
-                alert("Lat: " + pos.coords.latitude + " Lon: " + pos.coords.longitude);
+            const geoBtn = document.querySelector('.geo-btn');
+            const originalText = geoBtn.innerText;
+            geoBtn.innerText = "🔍 Locating...";
+
+            navigator.geolocation.getCurrentPosition(position => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+
+                // Reverse Geocode using BigDataCloud (Free, no API key needed for basic usage)
+                fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const cleanCountry = data.principalSubdivision || data.countryName;
+                        const url = `{{ route('home') }}?country=${encodeURIComponent(cleanCountry)}`;
+                        updateContent(url);
+
+                        geoBtn.innerText = `📍 Matches in ${cleanCountry}`;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching country:', error);
+                        geoBtn.innerText = originalText;
+                    });
+            }, () => {
+                alert("Location access denied.");
+                geoBtn.innerText = originalText;
             });
         }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        const contentArea = document.querySelector('.content');
-        const dateNavArea = document.querySelector('.date-nav');
-
-        function updateContent(url) {
-            // Show a simple loading state (UX boost)
-            contentArea.style.opacity = '0.5';
-
-            fetch(url, {
-                headers: {"X-Requested-With": "XMLHttpRequest"}
-            })
-                .then(response => response.json())
-                .then(data => {
-                    contentArea.innerHTML = data.matchListHtml;
-                    dateNavArea.innerHTML = data.dateNavHtml;
-                    contentArea.style.opacity = '1';
-
-                    // Update the URL in the browser without reloading
-                    window.history.pushState({}, '', url);
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
         // --- Search Listener (with Debounce) ---
         let searchTimer;
         document.getElementById('teamSearch').addEventListener('input', function (e) {
