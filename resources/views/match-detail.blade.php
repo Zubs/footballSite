@@ -5,45 +5,61 @@
     <div class="detail-container">
         <div class="detail-hero"
              style="background: linear-gradient(135deg, var(--sky-light) 0%, var(--pink-light) 100%); padding: 40px 24px; text-align: center; border-bottom: 1px solid var(--border);">
+
+            <div style="margin-bottom: 24px;">
+        <span style="background: var(--surface); padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; color: var(--sky-dark); border: 1px solid var(--border); text-transform: uppercase; letter-spacing: 1px;">
+            {{ $game->league_name }} • {{ $game->league_country }}
+        </span>
+                <div style="margin-top: 10px; font-size: 13px; color: var(--text-muted); font-weight: 500;">
+                    Season {{ $game->season }} • {{ $game->league_round }}
+                </div>
+            </div>
+
             <div style="display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 16px;">
                 <div class="detail-team">
-                    <img src="{{ $game->homeTeam->crest_url }}" style="width: 64px; height: 64px; object-fit: contain;">
-                    <div style="font-size: 18px; font-weight: 600; margin-top: 8px;">{{ $game->homeTeam->name }}</div>
+                    <img src="{{ $game->homeTeam->crest_url }}" style="width: 72px; height: 72px; object-fit: contain;">
+                    <div style="font-size: 18px; font-weight: 700; margin-top: 12px;">{{ $game->homeTeam->name }}</div>
                 </div>
 
-                <div style="font-family: 'DM Serif Display', serif; font-size: 48px;">
+                <div style="font-family: 'DM Serif Display', serif; font-size: 56px; color: var(--text);">
                     {{ $game->score_home }} – {{ $game->score_away }}
                 </div>
 
                 <div class="detail-team">
-                    <img src="{{ $game->awayTeam->crest_url }}" style="width: 64px; height: 64px; object-fit: contain;">
-                    <div style="font-size: 18px; font-weight: 600; margin-top: 8px;">{{ $game->awayTeam->name }}</div>
+                    <img src="{{ $game->awayTeam->crest_url }}" style="width: 72px; height: 72px; object-fit: contain;">
+                    <div style="font-size: 18px; font-weight: 700; margin-top: 12px;">{{ $game->awayTeam->name }}</div>
                 </div>
             </div>
-            <div style="color: var(--text-muted); font-size: 14px; font-weight: 500;">
-                {{ $game->venue }} • {{ $game->status }}
-                • {{ Carbon::parse($game->game_date)->format('d M Y') }}
-            </div>
-            <button onclick="shareMatch()" class="geo-btn" style="margin-top: 15px; background: var(--sky-light); border-color: var(--sky-mid); color: var(--sky-dark);">
-                📤 Share Match
-            </button>
 
-            <script>
-                function shareMatch() {
-                    if (navigator.share) {
-                        navigator.share({
-                            title: '{{ $game->homeTeam->name }} vs {{ $game->awayTeam->name }}',
-                            text: 'Check out the live stats and join the discussion for this match on FootballSite!',
-                            url: window.location.href
-                        }).then(() => {
-                            console.log('Thanks for sharing!');
-                        }).catch(console.error);
-                    } else {
-                        // Fallback for desktop browsers that don't support native share
-                        alert("Copy this link to share: " + window.location.href);
+            <div style="color: var(--text-muted); font-size: 14px; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                <div>
+                    <span style="color: var(--pink-dark); font-weight: 700;">{{ $game->status }}</span>
+                    • {{ $game->venue }}
+                    • {{ Carbon::parse($game->game_date)->format('H:i') }}
+                    • {{ Carbon::parse($game->game_date)->format('d M Y') }}
+                </div>
+
+                <button onclick="shareMatch()" style="background: var(--surface); border: 1px solid var(--sky-mid); color: var(--sky-dark); padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                    <span>📤</span> Share Match Details
+                </button>
+
+                <script>
+                    function shareMatch() {
+                        if (navigator.share) {
+                            navigator.share({
+                                title: '{{ $game->homeTeam->name }} vs {{ $game->awayTeam->name }}',
+                                text: 'Check out the live stats and join the discussion for this match on FootballSite!',
+                                url: window.location.href
+                            }).then(() => {
+                                console.log('Thanks for sharing!');
+                            }).catch(console.error);
+                        } else {
+                            // Fallback for desktop browsers that don't support native share
+                            alert("Copy this link to share: " + window.location.href);
+                        }
                     }
-                }
-            </script>
+                </script>
+            </div>
         </div>
 
         <div

@@ -16,7 +16,11 @@ class Game extends Model
         'status', 'score_home', 'score_away', 'venue',
         'last_synced_at',
         'lineups',
-        'stats'
+        'stats',
+        'league_name',
+        'league_country',
+        'league_round',
+        'season'
     ];
 
     protected $casts = [

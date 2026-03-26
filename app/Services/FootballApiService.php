@@ -42,6 +42,7 @@ class FootballApiService
                 $fixture = $item['fixture'];
                 $teams = $item['teams'];
                 $goals = $item['goals'];
+                $league = $item['league'];
 
                 $homeTeam = Team::updateOrCreate(
                     ['api_id' => $teams['home']['id']],
@@ -72,6 +73,10 @@ class FootballApiService
                         'score_home' => $goals['home'] ?? 0,
                         'score_away' => $goals['away'] ?? 0,
                         'venue' => $fixture['venue']['name'] ?? 'Unknown Stadium',
+                        'league_name' => $league['name'],
+                        'league_country' => $league['country'],
+                        'league_round' => $league['round'],
+                        'season' => $league['season'],
                         'last_synced_at' => now(),
                     ]
                 );

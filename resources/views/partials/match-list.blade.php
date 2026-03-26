@@ -13,10 +13,24 @@
                         <img src="{{ $game->homeTeam->crest_url }}" class="team-badge-img" alt="">
                         <div class="team-name">{{ $game->homeTeam->name }}</div>
                     </div>
+
                     <div class="score-center">
-                        <div class="score-big">{{ $game->score_home }} – {{ $game->score_away }}</div>
-                        <div class="score-status">FT</div>
+                        @if($game->status == 'FINISHED')
+                            <div class="score-big">{{ $game->score_home }} – {{ $game->score_away }}</div>
+                            <div class="score-status">FT • {{ Carbon::parse($game->game_date)->format('H:i') }}</div>
+                        @elseif($game->status === 'LIVE')
+                            <div class="score-time" style="background: #FF4B4B; color: white;">LIVE</div>
+                            <div style="font-weight: 700; margin-top: 4px;">{{ $game->score_home }} - {{ $game->score_away }}</div>
+                        @else
+                            <div class="score-time">{{ Carbon::parse($game->game_date)->format('H:i') }}</div>
+                        @endif
+
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 8px;">
+                            {{ $game->league_round }}, {{ $game->league_name }} ({{ $game->league_country }}
+                            ) {{ $game->season }}
+                        </div>
                     </div>
+
                     <div class="team-side right">
                         <img src="{{ $game->awayTeam->crest_url }}" class="team-badge-img" alt="">
                         <div class="team-name">{{ $game->awayTeam->name }}</div>
@@ -40,9 +54,27 @@
                         <img src="{{ $game->homeTeam->crest_url }}" class="team-badge-img" alt="">
                         <div class="team-name">{{ $game->homeTeam->name }}</div>
                     </div>
+
                     <div class="score-center">
-                        <div class="score-time">{{ Carbon::parse($game->match_date)->format('H:i') }}</div>
+                        @if($game->status == 'FINISHED')
+                            <div class="score-big">{{ $game->score_home }} – {{ $game->score_away }}</div>
+                            <div class="score-status">FT • {{ Carbon::parse($game->game_date)->format('H:i') }}</div>
+                        @elseif($game->status === 'LIVE')
+                            <div class="score-time" style="background: blue; color: white;">LIVE</div>
+                            <div style="font-weight: 700; margin-top: 4px;">{{ $game->score_home }} - {{ $game->score_away }}</div>
+                        @elseif($game->status === 'CANCELLED')
+                            <div class="score-time" style="background: #FF4B4B; color: white;">CANCELLED</div>
+                            <div style="font-weight: 700; margin-top: 4px;">{{ $game->score_home }} - {{ $game->score_away }}</div>
+                        @else
+                            <div class="score-time">{{ Carbon::parse($game->game_date)->format('H:i') }}</div>
+                        @endif
+
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 8px;">
+                            {{ $game->league_round }}, {{ $game->league_name }} ({{ $game->league_country }}
+                            ) {{ $game->season }}
+                        </div>
                     </div>
+
                     <div class="team-side right">
                         <img src="{{ $game->awayTeam->crest_url }}" class="team-badge-img" alt="">
                         <div class="team-name">{{ $game->awayTeam->name }}</div>

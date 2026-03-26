@@ -29,9 +29,14 @@ class HomeController extends Controller
         $country = $request->query('country');
         $date = Carbon::parse($dateString);
         $dayExists = Game::whereDate('game_date', $date)->exists();
+        $isRecent = $date->isToday() || $date->isYesterday();
 
-        if (!$dayExists && !$term && !$country) {
-            $this->apiService->syncMatches($dateString);
+        if ((!$dayExists || $isRecent) && !$term && !$country) {
+            $lastSynced = Game::whereDate('game_date', $date)->max('last_synced_at');
+
+            if (!$lastSynced || Carbon::parse($lastSynced)->diffInMinutes(now()) > 10) {
+                $this->apiService->syncMatches($dateString);
+            }
         }
 
         $query = Game::with(['homeTeam', 'awayTeam'])->whereDate('game_date', $date);
