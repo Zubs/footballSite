@@ -236,10 +236,14 @@
     </div>
 </nav>
 
-<div class="search-strip">
-    <input type="text" id="teamSearch" class="search-input" placeholder="🔍 Search by team name...">
-    <button class="geo-btn" onclick="getLocation()">📍 Matches near me</button>
-</div>
+<form action="{{ route('home') }}" method="GET" id="globalSearchForm">
+    <div class="search-strip">
+        <input type="text" name="term" id="teamSearch" class="search-input"
+               placeholder="🔍 Search by team name..."
+               value="{{ request('term') }}">
+        <button type="button" class="geo-btn" onclick="getLocation()">📍 Matches near me</button>
+    </div>
+</form>
 
 <main>
     @yield('content')

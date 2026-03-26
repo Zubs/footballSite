@@ -24,7 +24,7 @@ class FootballApiService
      * Maps 'fixtures' to our 'Game' model.
      * @throws ConnectionException
      */
-    public function syncMatches($date = null)
+    public function syncMatches($date = null): bool
     {
         $date = $date ?: Carbon::today()->format('Y-m-d');
 
@@ -98,5 +98,37 @@ class FootballApiService
         ];
 
         return $map[$shortStatus] ?? 'SCHEDULED';
+    }
+
+    /**
+     * Fetch and store lineups, substitutes, and managers.
+     * @throws ConnectionException
+     */
+    public function syncLineups($game): void
+    {
+        $response = Http::withHeaders([
+            'x-apisports-key' => $this->apiKey,
+            'x-rapidapi-host' => 'v3.football.api-sports.io'
+        ])->get($this->baseUrl . 'fixtures/lineups', ['fixture' => $game->api_id]);
+
+        if ($response->successful()) {
+            // This stores the 'response' array which contains startXI, substitutes, and coach
+            $game->update(['lineups' => $response->json()['response']]);
+        }
+    }
+
+    /**
+     * Fetch and store match statistics (Possession, Shots, etc.)
+     */
+    public function syncStats($game): void
+    {
+        $response = Http::withHeaders([
+            'x-apisports-key' => $this->apiKey,
+            'x-rapidapi-host' => 'v3.football.api-sports.io'
+        ])->get($this->baseUrl . 'fixtures/statistics', ['fixture' => $game->api_id]);
+
+        if ($response->successful()) {
+            $game->update(['stats' => $response->json()['response']]);
+        }
     }
 }
