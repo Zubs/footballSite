@@ -39,7 +39,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 16px;
             height: 56px;
         }
 
@@ -61,7 +61,7 @@
 
         .search-strip {
             background: var(--sky-light);
-            padding: 14px 24px;
+            padding: 12px 16px;
             display: flex;
             flex-direction: column; /* Stack search and geo button for better mobile flow */
             gap: 12px;
@@ -79,6 +79,7 @@
             font-size: 16px;
             outline: none;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
         }
 
         /* Date Nav */
@@ -216,32 +217,227 @@
         .team-side.right {
             align-items: flex-end;
         }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--sky-dark);
+            cursor: pointer;
+        }
+
+        /* Match Detail Grid System */
+        .detail-grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 350px;
+            gap: 0;
+            background: var(--surface);
+            max-width: 1400px;
+            margin: 20px auto;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .detail-column {
+            padding: 24px;
+            border-right: 1px solid var(--border);
+        }
+
+        .lineups-inner-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* Responsive Media Queries */
+        @media (max-width: 1024px) {
+            .detail-grid-container {
+                grid-template-columns: 1fr; /* Stack columns on tablets/phones */
+            }
+
+            .detail-column {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Navigation Menu */
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links, .nav-right {
+                display: none; /* Hide by default on mobile */
+                position: absolute;
+                top: 56px;
+                left: 0;
+                width: 100%;
+                background: var(--surface);
+                flex-direction: column;
+                padding: 20px;
+                border-bottom: 1px solid var(--border);
+                z-index: 100;
+            }
+
+            .nav-active {
+                display: flex !important;
+            }
+
+            /* Hero Section */
+            .detail-hero {
+                padding: 24px 16px !important;
+            }
+
+            .detail-hero div[style*="gap: 40px"] {
+                gap: 15px !important;
+            }
+
+            .detail-hero font-size[style*="56px"] {
+                font-size: 32px !important;
+            }
+
+            /* Lineups */
+            .lineups-inner-grid {
+                grid-template-columns: 1fr; /* Stack home/away lineups */
+            }
+        }
+
+        @media (max-width: 600px) {
+            .nav-links {
+                display: none; /* Hide extra links to save space or move to a burger menu */
+            }
+
+            .nav-brand {
+                font-size: 18px; /* */
+            }
+
+            .search-input {
+                font-size: 14px; /* Slightly smaller text for mobile */
+                padding: 10px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .match-card {
+                padding: 12px 8px;
+                gap: 8px;
+                grid-template-columns: 1.2fr 1fr 1.2fr; /* Give teams slightly more space */
+            }
+
+            .team-name {
+                font-size: 12px; /* */
+            }
+
+            .team-badge-img {
+                width: 24px;
+                height: 24px; /* */
+            }
+
+            .score-big {
+                font-size: 18px; /* */
+            }
+
+            .score-center {
+                min-width: 60px; /* */
+            }
+
+            .score-status, .score-time {
+                font-size: 10px; /* */
+            }
+        }
+
+        /* Update these in your <style> block */
+
+        .nav {
+            position: relative; /* Essential for absolute mobile menu */
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            height: 64px;
+            z-index: 1000; /* Keeps menu above search bar */
+        }
+
+        .nav-menu-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block; /* Hamburger becomes visible */
+            }
+
+            .nav-menu-container {
+                display: none; /* Hidden until toggled */
+                position: absolute;
+                top: 64px; /* Directly below the nav bar */
+                left: 0;
+                width: 100%;
+                background: var(--surface);
+                flex-direction: column;
+                padding: 20px 0;
+                border-bottom: 2px solid var(--sky);
+                box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+            }
+
+            .nav-menu-container.active {
+                display: flex; /* Shown when toggled */
+            }
+
+            .nav-links, .nav-right {
+                display: flex; /* Ensure these are flex on mobile */
+                flex-direction: column;
+                width: 100%;
+                align-items: center;
+                gap: 16px;
+                margin: 10px 0;
+            }
+        }
     </style>
 </head>
 <body>
 <nav class="nav">
-    <div class="nav-brand"><span style="width:8px;height:8px;background:var(--pink-mid);border-radius:50%;"></span>
+    <div class="nav-brand">
+        <span style="width:8px;height:8px;background:var(--pink-mid);border-radius:50%;"></span>
         FootballSite
     </div>
-    <div class="nav-links">
-        <a href="{{ route('home') }}" class="nav-link active">Matches</a>
-        <a href="/about" class="nav-link">About</a>
-    </div>
-    <div class="nav-right">
-        @auth
-            <span class="nav-link" style="font-weight: 600; color: var(--sky-dark);">
-            {{ Auth::user()->name }}
-        </span>
-            <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                @csrf
-                <button type="submit" class="nav-link" style="background: none; border: none; cursor: pointer;">
-                    Log Out
-                </button>
-            </form>
-        @else
-            <a href="{{ route('login') }}" class="nav-link">Log in</a>
-            <a href="{{ route('register') }}" class="btn-login" style="text-decoration: none;">Register</a>
-        @endauth
+
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle Menu">☰</button>
+
+    <div class="nav-menu-container" id="navMenu">
+        <div class="nav-links">
+            <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Matches</a>
+            <a href="/about" class="nav-link {{ request()->is('about') ? 'active' : '' }}">About</a>
+        </div>
+
+        <div class="nav-right">
+            @auth
+                <span class="nav-user-label"
+                      style="font-size: 14px; font-weight: 600; color: var(--sky-dark); margin-right: 10px;">
+                    {{ Auth::user()->name }}
+                </span>
+                <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="nav-link"
+                            style="background: none; border: none; cursor: pointer; padding: 0;">
+                        Log Out
+                    </button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" class="nav-link">Log in</a>
+                <a href="{{ route('register') }}" class="btn-login"
+                   style="text-decoration: none; background: var(--sky-dark); color: white; padding: 6px 16px; border-radius: 20px; font-size: 14px;">Register</a>
+            @endauth
+        </div>
     </div>
 </nav>
 
@@ -259,6 +455,11 @@
 </main>
 
 <script>
+    function toggleMenu() {
+        const menu = document.getElementById('navMenu');
+        menu.classList.toggle('active');
+    }
+
     function updateContent(url) {
         const contentArea = document.querySelector('.content');
         const dateNavArea = document.querySelector('.date-nav');
