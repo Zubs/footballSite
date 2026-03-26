@@ -78,7 +78,7 @@
             padding: 12px 20px;
             font-size: 16px;
             outline: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         /* Date Nav */
@@ -229,9 +229,18 @@
     </div>
     <div class="nav-right">
         @auth
-            <span class="nav-link">{{ Auth::user()->name }}</span>
+            <span class="nav-link" style="font-weight: 600; color: var(--sky-dark);">
+            {{ Auth::user()->name }}
+        </span>
+            <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                @csrf
+                <button type="submit" class="nav-link" style="background: none; border: none; cursor: pointer;">
+                    Log Out
+                </button>
+            </form>
         @else
-            <a href="/login" class="btn-login">Log in</a>
+            <a href="{{ route('login') }}" class="nav-link">Log in</a>
+            <a href="{{ route('register') }}" class="btn-login" style="text-decoration: none;">Register</a>
         @endauth
     </div>
 </nav>
@@ -258,7 +267,7 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const contentArea = document.querySelector('.content');
         const dateNavArea = document.querySelector('.date-nav');
 
@@ -267,7 +276,7 @@
             contentArea.style.opacity = '0.5';
 
             fetch(url, {
-                headers: { "X-Requested-With": "XMLHttpRequest" }
+                headers: {"X-Requested-With": "XMLHttpRequest"}
             })
                 .then(response => response.json())
                 .then(data => {
@@ -283,7 +292,7 @@
 
         // --- Search Listener (with Debounce) ---
         let searchTimer;
-        document.getElementById('teamSearch').addEventListener('input', function(e) {
+        document.getElementById('teamSearch').addEventListener('input', function (e) {
             clearTimeout(searchTimer);
             searchTimer = setTimeout(() => {
                 const term = e.target.value;
@@ -293,7 +302,7 @@
         });
 
         // --- Date Arrow Listener ---
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (e.target.classList.contains('date-arrow') || e.target.closest('.date-arrow')) {
                 e.preventDefault();
                 const anchor = e.target.tagName === 'A' ? e.target : e.target.closest('a');

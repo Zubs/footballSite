@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Comment extends Model
 {
-    protected $fillable = ['user_id', 'match_id', 'content'];
+    protected $fillable = ['user_id', 'match_id', 'content', 'game_id'];
 
     public function user(): BelongsTo
     {

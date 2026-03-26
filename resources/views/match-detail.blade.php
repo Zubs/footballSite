@@ -119,9 +119,49 @@
             </div>
 
             <div style="padding: 24px; background: #fafafa;">
-                <h3 style="font-size: 14px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px;">
-                    Social Feed</h3>
+                <h3 style="font-size: 14px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px;">Social Feed</h3>
+                <div style="padding: 24px; background: #fafafa;">
+                    <h3 style="font-size: 14px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px;">Social Feed</h3>
 
+                    @auth
+                        <form action="{{ route('comments.store', $game->id) }}" method="POST" style="margin-bottom: 24px;">
+                            @csrf
+                            <textarea name="content" placeholder="What are your thoughts on this match?"
+                                      style="width: 100%; border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-family: inherit; resize: none; outline: none; font-size: 13px;"
+                                      rows="3" required></textarea>
+                            <button type="submit" style="background: var(--sky-dark); color: white; border: none; padding: 10px 20px; border-radius: 20px; margin-top: 8px; cursor: pointer; font-weight: 600; font-size: 12px;">
+                                Post Comment
+                            </button>
+                        </form>
+                    @else
+                        <div style="background: var(--sky-light); padding: 16px; border-radius: 12px; font-size: 13px; margin-bottom: 20px; text-align: center;">
+                            <p style="margin-bottom: 8px;">Want to join the discussion?</p>
+                            <a href="{{ route('login') }}" style="color: var(--sky-dark); font-weight: 700; text-decoration: none;">Log in</a> or
+                            <a href="{{ route('register') }}" style="color: var(--pink-dark); font-weight: 700; text-decoration: none;">Register</a>
+                        </div>
+                    @endauth
+
+                    <div class="comments-list" style="display: flex; flex-direction: column; gap: 16px;">
+                        @forelse($game->comments->sortByDesc('created_at') as $comment)
+                            <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                <div style="width: 36px; height: 36px; background: var(--sky-mid); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;">
+                                    {{ strtoupper(substr($comment->user->name, 0, 2)) }}
+                                </div>
+                                <div style="background: white; border: 1px solid var(--border); padding: 12px; border-radius: 0 16px 16px 16px; flex: 1; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                        <span style="font-size: 12px; font-weight: 700; color: var(--sky-dark);">{{ $comment->user->name }}</span>
+                                        <span style="font-size: 10px; color: var(--text-muted);">{{ $comment->created_at->diffForHumans() }}</span>
+                                    </div>
+                                    <p style="font-size: 13px; margin: 0; line-height: 1.4;">{{ $comment->content }}</p>
+                                </div>
+                            </div>
+                        @empty
+                            <div style="text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 20px;">
+                                No comments yet. Be the first to speak up!
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
             </div>
         </div>
     </div>
