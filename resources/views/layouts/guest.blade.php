@@ -1,30 +1,92 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FootballSite — Join the Conversation</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap"
+          rel="stylesheet">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <style>
+        :root {
+            --sky-light: #E8F4FC;
+            --sky-dark: #3A7CAC;
+            --pink-dark: #C45472;
+            --text: #1A2B3C;
+            --surface: #FFFFFF;
+            --page-bg: #F0F6FB;
+            --border: rgba(58, 124, 172, 0.15);
+        }
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--page-bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
+        .auth-card {
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(58, 124, 172, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
-            </div>
-        </div>
-    </body>
+        .auth-logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 28px;
+            color: var(--sky-dark);
+            text-align: center;
+            margin-bottom: 30px;
+            text-decoration: none;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            background: var(--sky-dark);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .auth-link {
+            color: var(--pink-dark);
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<div class="auth-card">
+    <a href="/" class="auth-logo">FootballSite</a>
+    {{ $slot }}
+</div>
+</body>
 </html>

@@ -8,10 +8,7 @@ use App\Http\Controllers\CommentController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/matches/{id}', [MatchController::class, 'show'])->name('matches.show');
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::view('/about', 'about')->name('about');
 
 Route::post('/matches/{id}/comment', [CommentController::class, 'store'])
     ->middleware('auth')
