@@ -1,59 +1,102 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FootballSite ⚽
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A dynamic, full-stack football match tracking and fan engagement web application, built as coursework for the **6CC001 Advanced Web Technologies** module at the **University of Wolverhampton**.
 
-## About Laravel
+> 🏆 **Grade: 100/100**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+FootballSite lets fans browse daily football fixtures, drill into detailed match statistics and lineups, and discuss games with other registered users. It integrates a live third-party football data API, supports AJAX-driven browsing without full page reloads, and uses the browser's Geolocation API to surface matches relevant to the user's location.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Features
 
-## Learning Laravel
+- **Daily match dashboard** — browse fixtures by date, split into completed and upcoming matches, with live status indicators (LIVE, FT, scheduled, postponed, cancelled).
+- **Live API sync** — fixtures, lineups, and statistics are pulled from the [API-Football](https://www.api-football.com/) (v3) service and cached in the database, refreshing automatically for recent/live match days.
+- **Match detail pages** — starting XIs, substitutes, managers, and a possession/shots/cards statistics breakdown rendered as comparative bars.
+- **AJAX search & date navigation** — searching by team name or paging between dates updates the match list in place via `fetch`, with debounced input handling.
+- **Geolocation-aware filtering** — a "Matches near me" button uses the browser Geolocation API plus reverse geocoding to filter fixtures by the user's country.
+- **User accounts** — registration, login, email verification, password reset/update, and account deletion (built on Laravel Breeze scaffolding).
+- **Social comments** — authenticated users can post comments on any match, displayed in a live-updating discussion feed.
+- **Responsive design** — custom CSS with fluid layouts and breakpoints for mobile, tablet, and desktop, including a collapsible mobile navigation menu.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Tech Stack
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Layer | Technology |
+|---|---|
+| Backend | PHP 8.2, Laravel 12 |
+| Database | MySQL (SQLite for local/testing) |
+| Frontend | Blade templates, vanilla JavaScript (Fetch API), Alpine.js |
+| Styling | Custom CSS with CSS variables, Tailwind (auth scaffolding) |
+| External API | API-Football v3 (fixtures, lineups, statistics) |
+| Auth | Laravel Breeze |
+| Testing | PHPUnit (Feature & Unit tests) |
+| Hosting | University student server (`mi-linux.wlv.ac.uk`) |
 
-## Laravel Sponsors
+## Project Structure
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```
+app/
+  Http/Controllers/       # HomeController, MatchController, CommentController, ProfileController, Auth/*
+  Models/                 # Game, Team, Comment, User
+  Services/               # FootballApiService — handles all API-Football integration
+resources/views/
+  home.blade.php          # Match dashboard
+  match-detail.blade.php  # Lineups, stats, comments
+  partials/               # AJAX-refreshed date-nav and match-list partials
+  auth/                   # Login, register, password reset views
+database/migrations/      # Schema for teams, games, comments, users
+routes/web.php            # Public + authenticated routes
+routes/auth.php           # Breeze authentication routes
+```
 
-### Premium Partners
+## Key Implementation Details
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- **`FootballApiService`** centralises all outbound calls to API-Football, mapping the API's fixture status codes to a local `ENUM` (`SCHEDULED`, `LIVE`, `FINISHED`, etc.) and upserting teams/games via `updateOrCreate` to avoid duplicate records on repeated syncs.
+- **`HomeController@index`** only re-syncs fixtures from the API when the requested day is today/yesterday and the last sync was more than 10 minutes ago, minimising unnecessary external API calls while keeping live scores current.
+- Match lineups and statistics are fetched **lazily**, on first visit to a match's detail page, and cached as JSON columns (`lineups`, `stats`) on the `games` table.
+- AJAX requests are detected server-side via `$request->ajax()`, returning rendered partial HTML (match list + date nav) as JSON so the same controller serves both full page loads and in-place updates.
 
-## Contributing
+## Getting Started
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+git clone <repository-url>
+cd footballsite
+composer install
+npm install
 
-## Code of Conduct
+cp .env.example .env
+php artisan key:generate
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Configure your database and API credentials in `.env`:
 
-## Security Vulnerabilities
+```env
+DB_CONNECTION=mysql
+DB_DATABASE=footballsite
+DB_USERNAME=root
+DB_PASSWORD=
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+FOOTBALL_DATA_API_KEY=your_api_football_key
+```
 
-## License
+Run migrations and start the app:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan migrate
+npm run build   # or `npm run dev` for local development
+php artisan serve
+```
+
+## Running Tests
+
+```bash
+composer test
+```
+
+## Module Context
+
+This project was submitted for **Assessment 1** of 6CC001 Advanced Web Technologies (Semester 2, 2025–2026), worth 50% of the module mark. The brief required a dynamic PHP/MySQL website (framework of choice) hosted on the university's student server, demonstrating the modern web development techniques covered in lectures — dynamic server-side scripting, database-driven content, AJAX, and integration with browser/device APIs. Content management systems such as WordPress were explicitly disallowed.
+
+## Author
+
+Zubair — Module Leader: Alix Bergeret
